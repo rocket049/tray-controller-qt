@@ -110,9 +110,9 @@ func (s *myApp) Run() {
 
 	s.board = widgets.NewQTextEdit(s.window)
 	s.grid.AddWidget(s.board, 1, 0)
-	s.board.SetEnabled(false)
 	s.board.SetTextColor(gui.NewQColor2(core.Qt__black))
 	s.board.SetTextBackgroundColor(gui.NewQColor2(core.Qt__white))
+	s.board.SetReadOnly(true)
 
 	s.input = widgets.NewQLineEdit(s.window)
 	s.grid.AddWidget(s.input, 1, 0)
