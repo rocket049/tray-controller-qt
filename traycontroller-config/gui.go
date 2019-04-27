@@ -141,8 +141,10 @@ func (s *myApp) Run() {
 	switch osID {
 	case 0:
 		s.cfgName.SetToolTip(gettext.T("I will copy the program to HOME/bin/ControllerName"))
+		s.cfgName.SetPlaceholderText(gettext.T("I will copy the program to HOME/bin/ControllerName"))
 	case 1:
 		s.cfgName.SetToolTip(gettext.T("I will copy the program to 'ControllerName'"))
+		s.cfgName.SetPlaceholderText(gettext.T("I will copy the program to 'ControllerName'"))
 	}
 
 	label = widgets.NewQLabel2(gettext.T("Exec:"), s.window, core.Qt__Widget)
@@ -152,6 +154,7 @@ func (s *myApp) Run() {
 	grid.AddWidget(s.cfgExec, 2, 1, 0)
 
 	s.cfgExec.SetToolTip(gettext.T("DOUBLE Click to show Choose Dialog"))
+	s.cfgExec.SetPlaceholderText(gettext.T("DOUBLE Click to show Choose Dialog"))
 
 	label = widgets.NewQLabel2(gettext.T("Args:"), s.window, core.Qt__Widget)
 	grid.AddWidget(label, 3, 0, 0)
@@ -160,6 +163,7 @@ func (s *myApp) Run() {
 	grid.AddWidget(s.cfgArgs, 3, 1, 0)
 
 	s.cfgArgs.SetToolTip(gettext.T("Split arguments with SPACE, example:") + "args1 arg2 ...")
+	s.cfgArgs.SetPlaceholderText(gettext.T("Split arguments with SPACE, example:") + "args1 arg2 ...")
 
 	label = widgets.NewQLabel2(gettext.T("Envs:"), s.window, core.Qt__Widget)
 	grid.AddWidget(label, 4, 0, 0)
@@ -168,6 +172,7 @@ func (s *myApp) Run() {
 	grid.AddWidget(s.cfgEnvs, 4, 1, 0)
 
 	s.cfgEnvs.SetToolTip(gettext.T("Split enviroment with ';', example:") + "Key1=Value1;Key2=Value2;...")
+	s.cfgEnvs.SetPlaceholderText(gettext.T("Split enviroment with ';', example:") + "Key1=Value1;Key2=Value2;...")
 
 	label = widgets.NewQLabel2(gettext.T("Wd:"), s.window, core.Qt__Widget)
 	grid.AddWidget(label, 5, 0, 0)
@@ -175,6 +180,7 @@ func (s *myApp) Run() {
 	s.cfgWd = widgets.NewQLineEdit(s.window)
 	grid.AddWidget(s.cfgWd, 5, 1, 0)
 	s.cfgWd.SetToolTip(gettext.T("DOUBLE Click to show Choose Dialog"))
+	s.cfgWd.SetPlaceholderText(gettext.T("DOUBLE Click to show Choose Dialog"))
 
 	label = widgets.NewQLabel2(gettext.T("RunIcon:"), s.window, core.Qt__Widget)
 	grid.AddWidget(label, 6, 0, 0)
@@ -182,6 +188,7 @@ func (s *myApp) Run() {
 	s.cfgRunIcon = widgets.NewQLineEdit(s.window)
 	grid.AddWidget(s.cfgRunIcon, 6, 1, 0)
 	s.cfgRunIcon.SetToolTip(gettext.T("DOUBLE Click to show Choose Dialog"))
+	s.cfgRunIcon.SetPlaceholderText(gettext.T("DOUBLE Click to show Choose Dialog"))
 
 	label = widgets.NewQLabel2(gettext.T("StopIcon:"), s.window, core.Qt__Widget)
 	grid.AddWidget(label, 7, 0, 0)
@@ -189,6 +196,7 @@ func (s *myApp) Run() {
 	s.cfgStopIcon = widgets.NewQLineEdit(s.window)
 	grid.AddWidget(s.cfgStopIcon, 7, 1, 0)
 	s.cfgStopIcon.SetToolTip(gettext.T("DOUBLE Click to show Choose Dialog"))
+	s.cfgStopIcon.SetPlaceholderText(gettext.T("DOUBLE Click to show Choose Dialog"))
 
 	s.button = widgets.NewQPushButton2(gettext.T("OK"), s.window)
 	grid.AddWidget3(s.button, 8, 0, 1, 2, 0)
