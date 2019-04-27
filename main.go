@@ -36,6 +36,7 @@ type myApp struct {
 	srv        *exec.Cmd
 	chStaus    chan int
 	pipeStdin  io.Writer
+	once       sync.Once
 
 	bridge *QtBridge
 }
@@ -46,58 +47,60 @@ func (s *myApp) Run() {
 	s.app.SetActiveWindow(s.window)
 
 	s.window.ConnectShowEvent(func(e *gui.QShowEvent) {
-		exe1, err := os.Executable()
-		if err != nil {
-			panic(err)
-		}
-		name1 := filepath.Base(exe1)
-		home1, err := os.UserHomeDir()
-		if err != nil {
-			panic(err)
-		}
-		json1 := filepath.Join(home1, "config", name1, "app.json")
-		cfg, err := GetCfgFromJSON(json1)
-		if err != nil {
-			s.showHelp(json1)
-			return
-		}
-		s.myCmd = new(myCommand)
-		s.myCmd.Name = cfg.Exec
-		args := []string{s.myCmd.Name}
-
-		sp := strings.Split(cfg.Args, " ")
-		for _, v := range sp {
-			if len(v) == 0 {
-				continue
+		s.once.Do(func() {
+			exe1, err := os.Executable()
+			if err != nil {
+				panic(err)
 			}
-			args = append(args, v)
-		}
-		s.myCmd.Args = args
-		//fmt.Println(s.myCmd.Args)
-
-		sp = strings.Split(cfg.Envs, ";")
-		envs := []string{}
-		for _, v := range os.Environ() {
-			envs = append(envs, v)
-		}
-		for _, v := range sp {
-			if len(v) == 0 {
-				continue
+			name1 := filepath.Base(exe1)
+			home1, err := os.UserHomeDir()
+			if err != nil {
+				panic(err)
 			}
-			envs = append(envs, v)
-		}
-		s.myCmd.Envs = envs
-		if len(cfg.Wd) > 0 {
-			os.Chdir(cfg.Wd)
-		}
+			json1 := filepath.Join(home1, "config", name1, "app.json")
+			cfg, err := GetCfgFromJSON(json1)
+			if err != nil {
+				s.showHelp(json1)
+				return
+			}
+			s.myCmd = new(myCommand)
+			s.myCmd.Name = cfg.Exec
+			args := []string{s.myCmd.Name}
 
-		s.iconRun = gui.NewQIcon5(path.Join(home1, "config", name1, "run.png"))
-		s.iconStop = gui.NewQIcon5(path.Join(home1, "config", name1, "stop.png"))
-		s.window.SetWindowTitle("Controller-" + s.myCmd.Name)
+			sp := strings.Split(cfg.Args, " ")
+			for _, v := range sp {
+				if len(v) == 0 {
+					continue
+				}
+				args = append(args, v)
+			}
+			s.myCmd.Args = args
+			//fmt.Println(s.myCmd.Args)
 
-		s.setSignals()
+			sp = strings.Split(cfg.Envs, ";")
+			envs := []string{}
+			for _, v := range os.Environ() {
+				envs = append(envs, v)
+			}
+			for _, v := range sp {
+				if len(v) == 0 {
+					continue
+				}
+				envs = append(envs, v)
+			}
+			s.myCmd.Envs = envs
+			if len(cfg.Wd) > 0 {
+				os.Chdir(cfg.Wd)
+			}
 
-		s.setTray()
+			s.iconRun = gui.NewQIcon5(path.Join(home1, "config", name1, "run.png"))
+			s.iconStop = gui.NewQIcon5(path.Join(home1, "config", name1, "stop.png"))
+			s.window.SetWindowTitle("Controller-" + s.myCmd.Name)
+
+			s.setSignals()
+
+			s.setTray()
+		})
 
 	})
 
