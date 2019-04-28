@@ -26,11 +26,11 @@ msgstr "运行图标："
 msgid "Wd:"
 msgstr "运行目录："
 
-msgid "I will copy the program to HOME/bin/ControllerName"
-msgstr "我将会复制程序到‘HOME/bin/控制器名字’"
+msgid "I will generate item ControllerName in Menu"
+msgstr "我将会在主菜单中生成启动项：控制器名字"
 
-msgid "I will copy the program to 'ControllerName'"
-msgstr "我将会复制程序到控制器名字’"
+msgid "I will generate script: ControllerName.bat"
+msgstr "我将会生成启动脚本：控制器名字.bat’"
 
 msgid "ControllerName:"
 msgstr "控制器名字："

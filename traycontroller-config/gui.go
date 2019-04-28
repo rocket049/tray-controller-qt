@@ -141,11 +141,11 @@ func (s *myApp) Run() {
 	grid.AddWidget(s.cfgName, 1, 1, 0)
 	switch osID {
 	case 0:
-		s.cfgName.SetToolTip(gettext.T("I will copy the program to HOME/bin/ControllerName"))
-		s.cfgName.SetPlaceholderText(gettext.T("I will copy the program to HOME/bin/ControllerName"))
+		s.cfgName.SetToolTip(gettext.T("I will generate item ControllerName in Menu"))
+		s.cfgName.SetPlaceholderText(gettext.T("I will generate item ControllerName in Menu"))
 	case 1:
-		s.cfgName.SetToolTip(gettext.T("I will copy the program to 'ControllerName'"))
-		s.cfgName.SetPlaceholderText(gettext.T("I will copy the program to 'ControllerName'"))
+		s.cfgName.SetToolTip(gettext.T("I will generate script: ControllerName.bat"))
+		s.cfgName.SetPlaceholderText(gettext.T("I will generate script: ControllerName.bat"))
 	}
 
 	label = widgets.NewQLabel2(gettext.T("Exec:"), s.window, core.Qt__Widget)
