@@ -282,9 +282,9 @@ Comment=Tray Controller`
 		//windows
 		exe1, _ := os.Executable()
 		dir1 := filepath.Dir(exe1)
-		//path1 := filepath.Join(dir1, name1+".bat")
-		//ioutil.WriteFile(path1, []byte(binPath), 0755)
-		path2 := filepath.Join(dir1, name1+".vbs")
+		dir2 := filepath.Join(dir1, "launcher")
+		os.MkdirAll(dir2, os.ModePerm)
+		path2 := filepath.Join(dir2, name1+".vbs")
 		tmpl := `Set shell = Wscript.createobject("wscript.shell")
 
 a = shell.run ("` + binPath + `",0)
