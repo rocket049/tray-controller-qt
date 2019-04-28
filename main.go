@@ -41,23 +41,18 @@ type myApp struct {
 	bridge *QtBridge
 }
 
-func (s *myApp) Run() {
+func (s *myApp) Run(name string) {
 	s.app = widgets.NewQApplication(len(os.Args), os.Args)
 	s.window = widgets.NewQDialog(nil, core.Qt__Window)
 	s.app.SetActiveWindow(s.window)
 
 	s.window.ConnectShowEvent(func(e *gui.QShowEvent) {
 		s.once.Do(func() {
-			exe1, err := os.Executable()
-			if err != nil {
-				panic(err)
-			}
-			name1 := filepath.Base(exe1)
 			home1, err := os.UserHomeDir()
 			if err != nil {
 				panic(err)
 			}
-			json1 := filepath.Join(home1, "config", name1, "app.json")
+			json1 := filepath.Join(home1, "config", name, "app.json")
 			cfg, err := GetCfgFromJSON(json1)
 			if err != nil {
 				s.showHelp(json1)
@@ -93,8 +88,8 @@ func (s *myApp) Run() {
 				os.Chdir(cfg.Wd)
 			}
 
-			s.iconRun = gui.NewQIcon5(path.Join(home1, "config", name1, "run.png"))
-			s.iconStop = gui.NewQIcon5(path.Join(home1, "config", name1, "stop.png"))
+			s.iconRun = gui.NewQIcon5(path.Join(home1, "config", name, "run.png"))
+			s.iconStop = gui.NewQIcon5(path.Join(home1, "config", name, "stop.png"))
 			s.window.SetWindowTitle("Controller-" + s.myCmd.Name)
 
 			s.setSignals()
@@ -277,7 +272,10 @@ func (s *myApp) showOutput(r io.ReadCloser) {
 }
 
 func (s *myApp) showHelp(name string) {
-	msg := `需要配置文件和2个图标！
+	msg := `
+	Usge: 
+		tray-controller cfg-dir-name
+	需要配置文件和2个图标！
 	配置文件：` + name + ` 包含内容：
 	{
 		"exec":"/full/path/to/prog",
@@ -305,6 +303,10 @@ func (s *myApp) showHelp(name string) {
 }
 
 func main() {
+	var name string
+	if len(os.Args) == 2 {
+		name = os.Args[1]
+	}
 	myapp = new(myApp)
-	myapp.Run()
+	myapp.Run(name)
 }

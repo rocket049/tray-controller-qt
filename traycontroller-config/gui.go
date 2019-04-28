@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
@@ -253,17 +254,20 @@ func copyFile(src, dst string, mode os.FileMode) error {
 	return err
 }
 
-func makeLauncher(binPath, iconPath string) error {
+func makeLauncher(name1, binPath, iconPath string) error {
 	if len(binPath) == 0 {
 		return errors.New("Must provide program pathname")
 	}
-	home, err := os.UserHomeDir()
-	if err != nil {
-		return err
-	}
-	name1 := filepath.Base(binPath)
-	path1 := filepath.Join(home, ".local", "share", "applications", name1+".desktop")
-	tmpl := `[Desktop Entry]
+	switch osID {
+	case 0:
+		//linux
+		home, err := os.UserHomeDir()
+		if err != nil {
+			return err
+		}
+
+		path1 := filepath.Join(home, ".local", "share", "applications", name1+".desktop")
+		tmpl := `[Desktop Entry]
 Encoding=UTF-8
 Version=1.0
 Type=Application
@@ -273,7 +277,15 @@ Name=` + name1 + `
 Icon=` + iconPath + `
 Categories=GTK;Utility;
 Comment=Tray Controller`
-	return ioutil.WriteFile(path1, []byte(tmpl), 0755)
+		return ioutil.WriteFile(path1, []byte(tmpl), 0755)
+	case 1:
+		//windows
+		exe1, _ := os.Executable()
+		dir1 := filepath.Dir(exe1)
+		path1 := filepath.Join(dir1, name1+".bat")
+		return ioutil.WriteFile(path1, []byte(binPath), 0755)
+	}
+	return nil
 }
 
 func zeroPanic(s string) {
@@ -288,12 +300,10 @@ func (s *myApp) makeConfig() {
 	name1 = strings.Trim(name1, " ")
 	zeroPanic(name1)
 
-	//copy program
-	binPath, err := getBinPath(name1)
-	errPanic(err)
+	//set program
 	progPath, err := getControllerPath()
 	errPanic(err)
-	copyFile(progPath, binPath, 0755)
+	binPath := fmt.Sprintf("\"%s\" \"%s\"", progPath, name1)
 
 	cfgDir, err := getCfgDir(name1)
 	//copy icons
@@ -327,7 +337,7 @@ func (s *myApp) makeConfig() {
 	fp.Write(buf)
 
 	//create launcher
-	makeLauncher(binPath, runIconPath)
+	makeLauncher(name1, binPath, runIconPath)
 }
 
 func main() {
