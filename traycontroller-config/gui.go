@@ -145,7 +145,7 @@ func (s *myApp) Run() {
 		s.cfgName.SetPlaceholderText(gettext.T("I will generate item ControllerName in Menu"))
 	case 1:
 		s.cfgName.SetToolTip(gettext.T("I will generate script: ControllerName.bat"))
-		s.cfgName.SetPlaceholderText(gettext.T("I will generate script: ControllerName.bat"))
+		s.cfgName.SetPlaceholderText(gettext.T("I will generate script: ControllerName.vbs"))
 	}
 
 	label = widgets.NewQLabel2(gettext.T("Exec:"), s.window, core.Qt__Widget)
@@ -277,13 +277,19 @@ Name=` + name1 + `
 Icon=` + iconPath + `
 Categories=GTK;Utility;
 Comment=Tray Controller`
-		return ioutil.WriteFile(path1, []byte(tmpl), 0755)
+		ioutil.WriteFile(path1, []byte(tmpl), 0755)
 	case 1:
 		//windows
 		exe1, _ := os.Executable()
 		dir1 := filepath.Dir(exe1)
 		path1 := filepath.Join(dir1, name1+".bat")
-		return ioutil.WriteFile(path1, []byte(binPath), 0755)
+		ioutil.WriteFile(path1, []byte(binPath), 0755)
+		path2 := filepath.Join(dir1, name1+".vbs")
+		tmpl := `Set shell = Wscript.createobject("wscript.shell")
+
+a = shell.run ("` + path1 + `",0)
+`
+		ioutil.WriteFile(path2, []byte(tmpl), 0755)
 	}
 	return nil
 }

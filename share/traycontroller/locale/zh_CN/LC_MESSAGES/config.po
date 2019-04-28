@@ -29,7 +29,7 @@ msgstr "运行目录："
 msgid "I will generate item ControllerName in Menu"
 msgstr "我将会在主菜单中生成启动项：控制器名字"
 
-msgid "I will generate script: ControllerName.bat"
+msgid "I will generate script: ControllerName.vbs"
 msgstr "我将会生成启动脚本：控制器名字.bat’"
 
 msgid "ControllerName:"
