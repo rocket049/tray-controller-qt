@@ -113,7 +113,7 @@ func (s *myApp) Run(name string) {
 	s.grid.AddWidget(s.input, 1, 0)
 
 	s.window.SetLayout(s.grid)
-	s.window.Show()
+	s.window.ShowNormal()
 
 	s.app.Exec()
 }
@@ -201,7 +201,7 @@ func (s *myApp) createMenu() *widgets.QMenu {
 
 	item = menu.AddAction("ShowWindow")
 	item.ConnectTriggered(func(checked bool) {
-		s.window.Show()
+		s.window.ShowNormal()
 	})
 
 	return menu
