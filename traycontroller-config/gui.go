@@ -53,36 +53,34 @@ func getCfgDir(name string) (string, error) {
 	} else {
 		return "", err
 	}
-	if osID == 1 {
-		dir1 = dir1 + ".exe"
-	}
+
 	os.MkdirAll(dir1, os.ModePerm)
 	return dir1, nil
 }
 
-func getBinPath(name string) (string, error) {
-	if len(name) == 0 {
-		return "", errors.New("Must give me a name.")
-	}
-	switch osID {
-	case 0:
-		home, err := os.UserHomeDir()
-		if err != nil {
-			return "", err
-		}
-		dir1 := filepath.Join(home, "bin")
-		os.MkdirAll(dir1, os.ModePerm)
-		return filepath.Join(dir1, name), nil
-	case 1:
-		exe, err := os.Executable()
-		if err != nil {
-			return "", err
-		}
-		dir1 := filepath.Dir(exe)
-		return filepath.Join(dir1, name+".exe"), nil
-	}
-	return "", nil
-}
+// func getBinPath(name string) (string, error) {
+// 	if len(name) == 0 {
+// 		return "", errors.New("Must give me a name.")
+// 	}
+// 	switch osID {
+// 	case 0:
+// 		home, err := os.UserHomeDir()
+// 		if err != nil {
+// 			return "", err
+// 		}
+// 		dir1 := filepath.Join(home, "bin")
+// 		os.MkdirAll(dir1, os.ModePerm)
+// 		return filepath.Join(dir1, name), nil
+// 	case 1:
+// 		exe, err := os.Executable()
+// 		if err != nil {
+// 			return "", err
+// 		}
+// 		dir1 := filepath.Dir(exe)
+// 		return filepath.Join(dir1, name+".exe"), nil
+// 	}
+// 	return "", nil
+// }
 
 func getControllerPath() (string, error) {
 	exe, err := os.Executable()
@@ -93,9 +91,9 @@ func getControllerPath() (string, error) {
 	var res string
 	switch osID {
 	case 0:
-		res = filepath.Join(dir1, "traycontroller")
+		res = filepath.Join(dir1, "tray-controller-qt")
 	case 1:
-		res = filepath.Join(dir1, "controller.exe")
+		res = filepath.Join(dir1, "tray-controller-qt.exe")
 	}
 	return res, nil
 }
@@ -309,7 +307,7 @@ func (s *myApp) makeConfig() {
 	//set program
 	progPath, err := getControllerPath()
 	errPanic(err)
-	binPath := fmt.Sprintf("\"%s\" \"%s\"", progPath, name1)
+	binPath := fmt.Sprintf("%s %s", progPath, name1)
 
 	cfgDir, err := getCfgDir(name1)
 	//copy icons
