@@ -26,11 +26,11 @@ msgstr "运行图标："
 msgid "Wd:"
 msgstr "运行目录："
 
-msgid "I will generate item ControllerName in Menu"
-msgstr "我将会在主菜单中生成启动项：控制器名字"
+msgid "I will generate Menu item"
+msgstr "我将会生成菜单项目"
 
-msgid "I will generate script: ControllerName.vbs"
-msgstr "我将会生成启动脚本：控制器名字.bat’"
+msgid "I will generate script"
+msgstr "我将会生成启动脚本"
 
 msgid "ControllerName:"
 msgstr "控制器名字："
