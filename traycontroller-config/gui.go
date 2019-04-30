@@ -295,7 +295,7 @@ Comment=Tray Controller`
 		path2 := filepath.Join(dir2, name1+".vbs")
 		tmpl := `Set shell = Wscript.createobject("wscript.shell")
 
-a = shell.run("cmd /c " + ` + binPath + `,0)
+a = shell.run("cmd /c ` + binPath + `",0)
 `
 		ioutil.WriteFile(path2, []byte(tmpl), 0755)
 	}
