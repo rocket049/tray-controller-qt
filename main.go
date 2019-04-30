@@ -202,6 +202,7 @@ func (s *myApp) createMenu() *widgets.QMenu {
 	item = menu.AddAction("ShowWindow")
 	item.ConnectTriggered(func(checked bool) {
 		s.window.ShowNormal()
+		s.window.Raise()
 	})
 
 	return menu
