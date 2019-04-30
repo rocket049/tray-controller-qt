@@ -252,6 +252,16 @@ func copyFile(src, dst string, mode os.FileMode) error {
 	return err
 }
 
+func makeBinPath(progPath, name1 string) string {
+	switch osID {
+	case 0:
+		return fmt.Sprintf("\"%s\" \"%s\"", progPath, name1)
+	case 1:
+		return fmt.Sprintf("\"\"\"%s\"\"\"+\" \"+\"\"\"%s\"\"\"", progPath, name1)
+	}
+	return fmt.Sprintf("\"%s\" \"%s\"", progPath, name1)
+}
+
 func makeLauncher(name1, binPath, iconPath string) error {
 	if len(binPath) == 0 {
 		return errors.New("Must provide program pathname")
@@ -285,7 +295,7 @@ Comment=Tray Controller`
 		path2 := filepath.Join(dir2, name1+".vbs")
 		tmpl := `Set shell = Wscript.createobject("wscript.shell")
 
-a = shell.run ("` + binPath + `",0)
+a = shell.run (` + binPath + `,0)
 `
 		ioutil.WriteFile(path2, []byte(tmpl), 0755)
 	}
@@ -307,7 +317,7 @@ func (s *myApp) makeConfig() {
 	//set program
 	progPath, err := getControllerPath()
 	errPanic(err)
-	binPath := fmt.Sprintf("%s %s", progPath, name1)
+	binPath := makeBinPath(progPath, name1)
 
 	cfgDir, err := getCfgDir(name1)
 	//copy icons
