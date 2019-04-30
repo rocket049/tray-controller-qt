@@ -361,5 +361,5 @@ func main() {
 	app = new(myApp)
 	app.Run()
 
-	gettext.SaveLog()
+	//gettext.SaveLog()
 }
