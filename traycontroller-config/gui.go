@@ -254,10 +254,10 @@ func copyFile(src, dst string, mode os.FileMode) error {
 
 func makeBinPath(progPath, name1 string) string {
 	switch osID {
-	case 0:
-		return fmt.Sprintf("\"%s\" \"%s\"", progPath, name1)
 	case 1:
-		return fmt.Sprintf("\"\"\"%s\"\"\"+\" \"+\"\"\"%s\"\"\"", progPath, name1)
+		p1 := strings.ReplaceAll(progPath, " ", `"" ""`)
+		n1 := strings.ReplaceAll(name1, " ", `"" ""`)
+		return fmt.Sprintf("%s %s", p1, n1)
 	}
 	return fmt.Sprintf("\"%s\" \"%s\"", progPath, name1)
 }
