@@ -221,13 +221,13 @@ func (s *myApp) setSignals() {
 
 	s.cfgRunIcon.ConnectMouseDoubleClickEvent(func(e *gui.QMouseEvent) {
 
-		s.cfgRunIcon.SetText(widgets.QFileDialog_GetOpenFileName(s.window, gettext.T("Choose a PNG Image"), ".", "PNG Files(*.png *.PNG)", "*", widgets.QFileDialog__ReadOnly))
+		s.cfgRunIcon.SetText(widgets.QFileDialog_GetOpenFileName(s.window, gettext.T("Choose a PNG Image"), "../share/traycontroller/icons", "PNG Files(*.png *.PNG)", "*", widgets.QFileDialog__ReadOnly))
 
 	})
 
 	s.cfgStopIcon.ConnectMouseDoubleClickEvent(func(e *gui.QMouseEvent) {
 
-		s.cfgStopIcon.SetText(widgets.QFileDialog_GetOpenFileName(s.window, gettext.T("Choose a PNG Image"), ".", "PNG Files(*.png *.PNG)", "*", widgets.QFileDialog__ReadOnly))
+		s.cfgStopIcon.SetText(widgets.QFileDialog_GetOpenFileName(s.window, gettext.T("Choose a PNG Image"), "../share/traycontroller/icons", "PNG Files(*.png *.PNG)", "*", widgets.QFileDialog__ReadOnly))
 
 	})
 
