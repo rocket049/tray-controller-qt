@@ -7,6 +7,7 @@ package main
 import "C"
 import (
 	"runtime"
+	"strings"
 	"unsafe"
 
 	"github.com/therecipe/qt"
@@ -21,9 +22,16 @@ func cGoUnpackString(s C.struct_Moc_PackedString) string {
 }
 func cGoUnpackBytes(s C.struct_Moc_PackedString) []byte {
 	if int(s.len) == -1 {
-		return []byte(C.GoString(s.data))
+		gs := C.GoString(s.data)
+		return *(*[]byte)(unsafe.Pointer(&gs))
 	}
 	return C.GoBytes(unsafe.Pointer(s.data), C.int(s.len))
+}
+func unpackStringList(s string) []string {
+	if len(s) == 0 {
+		return make([]string, 0)
+	}
+	return strings.Split(s, "¡¦!")
 }
 
 type QtBridge_ITF interface {
@@ -75,16 +83,16 @@ func NewQtBridgeFromPointer(ptr unsafe.Pointer) (n *QtBridge) {
 	return
 }
 
-//export callbackQtBridgedd03f6_Constructor
-func callbackQtBridgedd03f6_Constructor(ptr unsafe.Pointer) {
+//export callbackQtBridgea35b5a_Constructor
+func callbackQtBridgea35b5a_Constructor(ptr unsafe.Pointer) {
 	this := NewQtBridgeFromPointer(ptr)
 	qt.Register(ptr, this)
 }
 
-//export callbackQtBridgedd03f6_UpdateRun
-func callbackQtBridgedd03f6_UpdateRun(ptr unsafe.Pointer) {
+//export callbackQtBridgea35b5a_UpdateRun
+func callbackQtBridgea35b5a_UpdateRun(ptr unsafe.Pointer) {
 	if signal := qt.GetSignal(ptr, "updateRun"); signal != nil {
-		signal.(func())()
+		(*(*func())(signal))()
 	}
 
 }
@@ -93,37 +101,38 @@ func (ptr *QtBridge) ConnectUpdateRun(f func()) {
 	if ptr.Pointer() != nil {
 
 		if !qt.ExistsSignal(ptr.Pointer(), "updateRun") {
-			C.QtBridgedd03f6_ConnectUpdateRun(ptr.Pointer())
+			C.QtBridgea35b5a_ConnectUpdateRun(ptr.Pointer())
 		}
 
 		if signal := qt.LendSignal(ptr.Pointer(), "updateRun"); signal != nil {
-			qt.ConnectSignal(ptr.Pointer(), "updateRun", func() {
-				signal.(func())()
+			f := func() {
+				(*(*func())(signal))()
 				f()
-			})
+			}
+			qt.ConnectSignal(ptr.Pointer(), "updateRun", unsafe.Pointer(&f))
 		} else {
-			qt.ConnectSignal(ptr.Pointer(), "updateRun", f)
+			qt.ConnectSignal(ptr.Pointer(), "updateRun", unsafe.Pointer(&f))
 		}
 	}
 }
 
 func (ptr *QtBridge) DisconnectUpdateRun() {
 	if ptr.Pointer() != nil {
-		C.QtBridgedd03f6_DisconnectUpdateRun(ptr.Pointer())
+		C.QtBridgea35b5a_DisconnectUpdateRun(ptr.Pointer())
 		qt.DisconnectSignal(ptr.Pointer(), "updateRun")
 	}
 }
 
 func (ptr *QtBridge) UpdateRun() {
 	if ptr.Pointer() != nil {
-		C.QtBridgedd03f6_UpdateRun(ptr.Pointer())
+		C.QtBridgea35b5a_UpdateRun(ptr.Pointer())
 	}
 }
 
-//export callbackQtBridgedd03f6_UpdateStop
-func callbackQtBridgedd03f6_UpdateStop(ptr unsafe.Pointer) {
+//export callbackQtBridgea35b5a_UpdateStop
+func callbackQtBridgea35b5a_UpdateStop(ptr unsafe.Pointer) {
 	if signal := qt.GetSignal(ptr, "updateStop"); signal != nil {
-		signal.(func())()
+		(*(*func())(signal))()
 	}
 
 }
@@ -132,39 +141,40 @@ func (ptr *QtBridge) ConnectUpdateStop(f func()) {
 	if ptr.Pointer() != nil {
 
 		if !qt.ExistsSignal(ptr.Pointer(), "updateStop") {
-			C.QtBridgedd03f6_ConnectUpdateStop(ptr.Pointer())
+			C.QtBridgea35b5a_ConnectUpdateStop(ptr.Pointer())
 		}
 
 		if signal := qt.LendSignal(ptr.Pointer(), "updateStop"); signal != nil {
-			qt.ConnectSignal(ptr.Pointer(), "updateStop", func() {
-				signal.(func())()
+			f := func() {
+				(*(*func())(signal))()
 				f()
-			})
+			}
+			qt.ConnectSignal(ptr.Pointer(), "updateStop", unsafe.Pointer(&f))
 		} else {
-			qt.ConnectSignal(ptr.Pointer(), "updateStop", f)
+			qt.ConnectSignal(ptr.Pointer(), "updateStop", unsafe.Pointer(&f))
 		}
 	}
 }
 
 func (ptr *QtBridge) DisconnectUpdateStop() {
 	if ptr.Pointer() != nil {
-		C.QtBridgedd03f6_DisconnectUpdateStop(ptr.Pointer())
+		C.QtBridgea35b5a_DisconnectUpdateStop(ptr.Pointer())
 		qt.DisconnectSignal(ptr.Pointer(), "updateStop")
 	}
 }
 
 func (ptr *QtBridge) UpdateStop() {
 	if ptr.Pointer() != nil {
-		C.QtBridgedd03f6_UpdateStop(ptr.Pointer())
+		C.QtBridgea35b5a_UpdateStop(ptr.Pointer())
 	}
 }
 
 func QtBridge_QRegisterMetaType() int {
-	return int(int32(C.QtBridgedd03f6_QtBridgedd03f6_QRegisterMetaType()))
+	return int(int32(C.QtBridgea35b5a_QtBridgea35b5a_QRegisterMetaType()))
 }
 
 func (ptr *QtBridge) QRegisterMetaType() int {
-	return int(int32(C.QtBridgedd03f6_QtBridgedd03f6_QRegisterMetaType()))
+	return int(int32(C.QtBridgea35b5a_QtBridgea35b5a_QRegisterMetaType()))
 }
 
 func QtBridge_QRegisterMetaType2(typeName string) int {
@@ -173,7 +183,7 @@ func QtBridge_QRegisterMetaType2(typeName string) int {
 		typeNameC = C.CString(typeName)
 		defer C.free(unsafe.Pointer(typeNameC))
 	}
-	return int(int32(C.QtBridgedd03f6_QtBridgedd03f6_QRegisterMetaType2(typeNameC)))
+	return int(int32(C.QtBridgea35b5a_QtBridgea35b5a_QRegisterMetaType2(typeNameC)))
 }
 
 func (ptr *QtBridge) QRegisterMetaType2(typeName string) int {
@@ -182,15 +192,15 @@ func (ptr *QtBridge) QRegisterMetaType2(typeName string) int {
 		typeNameC = C.CString(typeName)
 		defer C.free(unsafe.Pointer(typeNameC))
 	}
-	return int(int32(C.QtBridgedd03f6_QtBridgedd03f6_QRegisterMetaType2(typeNameC)))
+	return int(int32(C.QtBridgea35b5a_QtBridgea35b5a_QRegisterMetaType2(typeNameC)))
 }
 
 func QtBridge_QmlRegisterType() int {
-	return int(int32(C.QtBridgedd03f6_QtBridgedd03f6_QmlRegisterType()))
+	return int(int32(C.QtBridgea35b5a_QtBridgea35b5a_QmlRegisterType()))
 }
 
 func (ptr *QtBridge) QmlRegisterType() int {
-	return int(int32(C.QtBridgedd03f6_QtBridgedd03f6_QmlRegisterType()))
+	return int(int32(C.QtBridgea35b5a_QtBridgea35b5a_QmlRegisterType()))
 }
 
 func QtBridge_QmlRegisterType2(uri string, versionMajor int, versionMinor int, qmlName string) int {
@@ -204,7 +214,7 @@ func QtBridge_QmlRegisterType2(uri string, versionMajor int, versionMinor int, q
 		qmlNameC = C.CString(qmlName)
 		defer C.free(unsafe.Pointer(qmlNameC))
 	}
-	return int(int32(C.QtBridgedd03f6_QtBridgedd03f6_QmlRegisterType2(uriC, C.int(int32(versionMajor)), C.int(int32(versionMinor)), qmlNameC)))
+	return int(int32(C.QtBridgea35b5a_QtBridgea35b5a_QmlRegisterType2(uriC, C.int(int32(versionMajor)), C.int(int32(versionMinor)), qmlNameC)))
 }
 
 func (ptr *QtBridge) QmlRegisterType2(uri string, versionMajor int, versionMinor int, qmlName string) int {
@@ -218,12 +228,12 @@ func (ptr *QtBridge) QmlRegisterType2(uri string, versionMajor int, versionMinor
 		qmlNameC = C.CString(qmlName)
 		defer C.free(unsafe.Pointer(qmlNameC))
 	}
-	return int(int32(C.QtBridgedd03f6_QtBridgedd03f6_QmlRegisterType2(uriC, C.int(int32(versionMajor)), C.int(int32(versionMinor)), qmlNameC)))
+	return int(int32(C.QtBridgea35b5a_QtBridgea35b5a_QmlRegisterType2(uriC, C.int(int32(versionMajor)), C.int(int32(versionMinor)), qmlNameC)))
 }
 
 func (ptr *QtBridge) __dynamicPropertyNames_atList(i int) *std_core.QByteArray {
 	if ptr.Pointer() != nil {
-		tmpValue := std_core.NewQByteArrayFromPointer(C.QtBridgedd03f6___dynamicPropertyNames_atList(ptr.Pointer(), C.int(int32(i))))
+		tmpValue := std_core.NewQByteArrayFromPointer(C.QtBridgea35b5a___dynamicPropertyNames_atList(ptr.Pointer(), C.int(int32(i))))
 		runtime.SetFinalizer(tmpValue, (*std_core.QByteArray).DestroyQByteArray)
 		return tmpValue
 	}
@@ -232,17 +242,17 @@ func (ptr *QtBridge) __dynamicPropertyNames_atList(i int) *std_core.QByteArray {
 
 func (ptr *QtBridge) __dynamicPropertyNames_setList(i std_core.QByteArray_ITF) {
 	if ptr.Pointer() != nil {
-		C.QtBridgedd03f6___dynamicPropertyNames_setList(ptr.Pointer(), std_core.PointerFromQByteArray(i))
+		C.QtBridgea35b5a___dynamicPropertyNames_setList(ptr.Pointer(), std_core.PointerFromQByteArray(i))
 	}
 }
 
 func (ptr *QtBridge) __dynamicPropertyNames_newList() unsafe.Pointer {
-	return C.QtBridgedd03f6___dynamicPropertyNames_newList(ptr.Pointer())
+	return C.QtBridgea35b5a___dynamicPropertyNames_newList(ptr.Pointer())
 }
 
 func (ptr *QtBridge) __findChildren_atList2(i int) *std_core.QObject {
 	if ptr.Pointer() != nil {
-		tmpValue := std_core.NewQObjectFromPointer(C.QtBridgedd03f6___findChildren_atList2(ptr.Pointer(), C.int(int32(i))))
+		tmpValue := std_core.NewQObjectFromPointer(C.QtBridgea35b5a___findChildren_atList2(ptr.Pointer(), C.int(int32(i))))
 		if !qt.ExistsSignal(tmpValue.Pointer(), "destroyed") {
 			tmpValue.ConnectDestroyed(func(*std_core.QObject) { tmpValue.SetPointer(nil) })
 		}
@@ -253,17 +263,17 @@ func (ptr *QtBridge) __findChildren_atList2(i int) *std_core.QObject {
 
 func (ptr *QtBridge) __findChildren_setList2(i std_core.QObject_ITF) {
 	if ptr.Pointer() != nil {
-		C.QtBridgedd03f6___findChildren_setList2(ptr.Pointer(), std_core.PointerFromQObject(i))
+		C.QtBridgea35b5a___findChildren_setList2(ptr.Pointer(), std_core.PointerFromQObject(i))
 	}
 }
 
 func (ptr *QtBridge) __findChildren_newList2() unsafe.Pointer {
-	return C.QtBridgedd03f6___findChildren_newList2(ptr.Pointer())
+	return C.QtBridgea35b5a___findChildren_newList2(ptr.Pointer())
 }
 
 func (ptr *QtBridge) __findChildren_atList3(i int) *std_core.QObject {
 	if ptr.Pointer() != nil {
-		tmpValue := std_core.NewQObjectFromPointer(C.QtBridgedd03f6___findChildren_atList3(ptr.Pointer(), C.int(int32(i))))
+		tmpValue := std_core.NewQObjectFromPointer(C.QtBridgea35b5a___findChildren_atList3(ptr.Pointer(), C.int(int32(i))))
 		if !qt.ExistsSignal(tmpValue.Pointer(), "destroyed") {
 			tmpValue.ConnectDestroyed(func(*std_core.QObject) { tmpValue.SetPointer(nil) })
 		}
@@ -274,17 +284,17 @@ func (ptr *QtBridge) __findChildren_atList3(i int) *std_core.QObject {
 
 func (ptr *QtBridge) __findChildren_setList3(i std_core.QObject_ITF) {
 	if ptr.Pointer() != nil {
-		C.QtBridgedd03f6___findChildren_setList3(ptr.Pointer(), std_core.PointerFromQObject(i))
+		C.QtBridgea35b5a___findChildren_setList3(ptr.Pointer(), std_core.PointerFromQObject(i))
 	}
 }
 
 func (ptr *QtBridge) __findChildren_newList3() unsafe.Pointer {
-	return C.QtBridgedd03f6___findChildren_newList3(ptr.Pointer())
+	return C.QtBridgea35b5a___findChildren_newList3(ptr.Pointer())
 }
 
 func (ptr *QtBridge) __findChildren_atList(i int) *std_core.QObject {
 	if ptr.Pointer() != nil {
-		tmpValue := std_core.NewQObjectFromPointer(C.QtBridgedd03f6___findChildren_atList(ptr.Pointer(), C.int(int32(i))))
+		tmpValue := std_core.NewQObjectFromPointer(C.QtBridgea35b5a___findChildren_atList(ptr.Pointer(), C.int(int32(i))))
 		if !qt.ExistsSignal(tmpValue.Pointer(), "destroyed") {
 			tmpValue.ConnectDestroyed(func(*std_core.QObject) { tmpValue.SetPointer(nil) })
 		}
@@ -295,17 +305,17 @@ func (ptr *QtBridge) __findChildren_atList(i int) *std_core.QObject {
 
 func (ptr *QtBridge) __findChildren_setList(i std_core.QObject_ITF) {
 	if ptr.Pointer() != nil {
-		C.QtBridgedd03f6___findChildren_setList(ptr.Pointer(), std_core.PointerFromQObject(i))
+		C.QtBridgea35b5a___findChildren_setList(ptr.Pointer(), std_core.PointerFromQObject(i))
 	}
 }
 
 func (ptr *QtBridge) __findChildren_newList() unsafe.Pointer {
-	return C.QtBridgedd03f6___findChildren_newList(ptr.Pointer())
+	return C.QtBridgea35b5a___findChildren_newList(ptr.Pointer())
 }
 
 func (ptr *QtBridge) __children_atList(i int) *std_core.QObject {
 	if ptr.Pointer() != nil {
-		tmpValue := std_core.NewQObjectFromPointer(C.QtBridgedd03f6___children_atList(ptr.Pointer(), C.int(int32(i))))
+		tmpValue := std_core.NewQObjectFromPointer(C.QtBridgea35b5a___children_atList(ptr.Pointer(), C.int(int32(i))))
 		if !qt.ExistsSignal(tmpValue.Pointer(), "destroyed") {
 			tmpValue.ConnectDestroyed(func(*std_core.QObject) { tmpValue.SetPointer(nil) })
 		}
@@ -316,26 +326,26 @@ func (ptr *QtBridge) __children_atList(i int) *std_core.QObject {
 
 func (ptr *QtBridge) __children_setList(i std_core.QObject_ITF) {
 	if ptr.Pointer() != nil {
-		C.QtBridgedd03f6___children_setList(ptr.Pointer(), std_core.PointerFromQObject(i))
+		C.QtBridgea35b5a___children_setList(ptr.Pointer(), std_core.PointerFromQObject(i))
 	}
 }
 
 func (ptr *QtBridge) __children_newList() unsafe.Pointer {
-	return C.QtBridgedd03f6___children_newList(ptr.Pointer())
+	return C.QtBridgea35b5a___children_newList(ptr.Pointer())
 }
 
 func NewQtBridge(parent std_core.QObject_ITF) *QtBridge {
-	tmpValue := NewQtBridgeFromPointer(C.QtBridgedd03f6_NewQtBridge(std_core.PointerFromQObject(parent)))
+	tmpValue := NewQtBridgeFromPointer(C.QtBridgea35b5a_NewQtBridge(std_core.PointerFromQObject(parent)))
 	if !qt.ExistsSignal(tmpValue.Pointer(), "destroyed") {
 		tmpValue.ConnectDestroyed(func(*std_core.QObject) { tmpValue.SetPointer(nil) })
 	}
 	return tmpValue
 }
 
-//export callbackQtBridgedd03f6_DestroyQtBridge
-func callbackQtBridgedd03f6_DestroyQtBridge(ptr unsafe.Pointer) {
+//export callbackQtBridgea35b5a_DestroyQtBridge
+func callbackQtBridgea35b5a_DestroyQtBridge(ptr unsafe.Pointer) {
 	if signal := qt.GetSignal(ptr, "~QtBridge"); signal != nil {
-		signal.(func())()
+		(*(*func())(signal))()
 	} else {
 		NewQtBridgeFromPointer(ptr).DestroyQtBridgeDefault()
 	}
@@ -345,12 +355,13 @@ func (ptr *QtBridge) ConnectDestroyQtBridge(f func()) {
 	if ptr.Pointer() != nil {
 
 		if signal := qt.LendSignal(ptr.Pointer(), "~QtBridge"); signal != nil {
-			qt.ConnectSignal(ptr.Pointer(), "~QtBridge", func() {
-				signal.(func())()
+			f := func() {
+				(*(*func())(signal))()
 				f()
-			})
+			}
+			qt.ConnectSignal(ptr.Pointer(), "~QtBridge", unsafe.Pointer(&f))
 		} else {
-			qt.ConnectSignal(ptr.Pointer(), "~QtBridge", f)
+			qt.ConnectSignal(ptr.Pointer(), "~QtBridge", unsafe.Pointer(&f))
 		}
 	}
 }
@@ -364,7 +375,7 @@ func (ptr *QtBridge) DisconnectDestroyQtBridge() {
 
 func (ptr *QtBridge) DestroyQtBridge() {
 	if ptr.Pointer() != nil {
-		C.QtBridgedd03f6_DestroyQtBridge(ptr.Pointer())
+		C.QtBridgea35b5a_DestroyQtBridge(ptr.Pointer())
 		ptr.SetPointer(nil)
 		runtime.SetFinalizer(ptr, nil)
 	}
@@ -372,16 +383,16 @@ func (ptr *QtBridge) DestroyQtBridge() {
 
 func (ptr *QtBridge) DestroyQtBridgeDefault() {
 	if ptr.Pointer() != nil {
-		C.QtBridgedd03f6_DestroyQtBridgeDefault(ptr.Pointer())
+		C.QtBridgea35b5a_DestroyQtBridgeDefault(ptr.Pointer())
 		ptr.SetPointer(nil)
 		runtime.SetFinalizer(ptr, nil)
 	}
 }
 
-//export callbackQtBridgedd03f6_Event
-func callbackQtBridgedd03f6_Event(ptr unsafe.Pointer, e unsafe.Pointer) C.char {
+//export callbackQtBridgea35b5a_Event
+func callbackQtBridgea35b5a_Event(ptr unsafe.Pointer, e unsafe.Pointer) C.char {
 	if signal := qt.GetSignal(ptr, "event"); signal != nil {
-		return C.char(int8(qt.GoBoolToInt(signal.(func(*std_core.QEvent) bool)(std_core.NewQEventFromPointer(e)))))
+		return C.char(int8(qt.GoBoolToInt((*(*func(*std_core.QEvent) bool)(signal))(std_core.NewQEventFromPointer(e)))))
 	}
 
 	return C.char(int8(qt.GoBoolToInt(NewQtBridgeFromPointer(ptr).EventDefault(std_core.NewQEventFromPointer(e)))))
@@ -389,15 +400,15 @@ func callbackQtBridgedd03f6_Event(ptr unsafe.Pointer, e unsafe.Pointer) C.char {
 
 func (ptr *QtBridge) EventDefault(e std_core.QEvent_ITF) bool {
 	if ptr.Pointer() != nil {
-		return int8(C.QtBridgedd03f6_EventDefault(ptr.Pointer(), std_core.PointerFromQEvent(e))) != 0
+		return int8(C.QtBridgea35b5a_EventDefault(ptr.Pointer(), std_core.PointerFromQEvent(e))) != 0
 	}
 	return false
 }
 
-//export callbackQtBridgedd03f6_EventFilter
-func callbackQtBridgedd03f6_EventFilter(ptr unsafe.Pointer, watched unsafe.Pointer, event unsafe.Pointer) C.char {
+//export callbackQtBridgea35b5a_EventFilter
+func callbackQtBridgea35b5a_EventFilter(ptr unsafe.Pointer, watched unsafe.Pointer, event unsafe.Pointer) C.char {
 	if signal := qt.GetSignal(ptr, "eventFilter"); signal != nil {
-		return C.char(int8(qt.GoBoolToInt(signal.(func(*std_core.QObject, *std_core.QEvent) bool)(std_core.NewQObjectFromPointer(watched), std_core.NewQEventFromPointer(event)))))
+		return C.char(int8(qt.GoBoolToInt((*(*func(*std_core.QObject, *std_core.QEvent) bool)(signal))(std_core.NewQObjectFromPointer(watched), std_core.NewQEventFromPointer(event)))))
 	}
 
 	return C.char(int8(qt.GoBoolToInt(NewQtBridgeFromPointer(ptr).EventFilterDefault(std_core.NewQObjectFromPointer(watched), std_core.NewQEventFromPointer(event)))))
@@ -405,15 +416,15 @@ func callbackQtBridgedd03f6_EventFilter(ptr unsafe.Pointer, watched unsafe.Point
 
 func (ptr *QtBridge) EventFilterDefault(watched std_core.QObject_ITF, event std_core.QEvent_ITF) bool {
 	if ptr.Pointer() != nil {
-		return int8(C.QtBridgedd03f6_EventFilterDefault(ptr.Pointer(), std_core.PointerFromQObject(watched), std_core.PointerFromQEvent(event))) != 0
+		return int8(C.QtBridgea35b5a_EventFilterDefault(ptr.Pointer(), std_core.PointerFromQObject(watched), std_core.PointerFromQEvent(event))) != 0
 	}
 	return false
 }
 
-//export callbackQtBridgedd03f6_ChildEvent
-func callbackQtBridgedd03f6_ChildEvent(ptr unsafe.Pointer, event unsafe.Pointer) {
+//export callbackQtBridgea35b5a_ChildEvent
+func callbackQtBridgea35b5a_ChildEvent(ptr unsafe.Pointer, event unsafe.Pointer) {
 	if signal := qt.GetSignal(ptr, "childEvent"); signal != nil {
-		signal.(func(*std_core.QChildEvent))(std_core.NewQChildEventFromPointer(event))
+		(*(*func(*std_core.QChildEvent))(signal))(std_core.NewQChildEventFromPointer(event))
 	} else {
 		NewQtBridgeFromPointer(ptr).ChildEventDefault(std_core.NewQChildEventFromPointer(event))
 	}
@@ -421,14 +432,14 @@ func callbackQtBridgedd03f6_ChildEvent(ptr unsafe.Pointer, event unsafe.Pointer)
 
 func (ptr *QtBridge) ChildEventDefault(event std_core.QChildEvent_ITF) {
 	if ptr.Pointer() != nil {
-		C.QtBridgedd03f6_ChildEventDefault(ptr.Pointer(), std_core.PointerFromQChildEvent(event))
+		C.QtBridgea35b5a_ChildEventDefault(ptr.Pointer(), std_core.PointerFromQChildEvent(event))
 	}
 }
 
-//export callbackQtBridgedd03f6_ConnectNotify
-func callbackQtBridgedd03f6_ConnectNotify(ptr unsafe.Pointer, sign unsafe.Pointer) {
+//export callbackQtBridgea35b5a_ConnectNotify
+func callbackQtBridgea35b5a_ConnectNotify(ptr unsafe.Pointer, sign unsafe.Pointer) {
 	if signal := qt.GetSignal(ptr, "connectNotify"); signal != nil {
-		signal.(func(*std_core.QMetaMethod))(std_core.NewQMetaMethodFromPointer(sign))
+		(*(*func(*std_core.QMetaMethod))(signal))(std_core.NewQMetaMethodFromPointer(sign))
 	} else {
 		NewQtBridgeFromPointer(ptr).ConnectNotifyDefault(std_core.NewQMetaMethodFromPointer(sign))
 	}
@@ -436,14 +447,14 @@ func callbackQtBridgedd03f6_ConnectNotify(ptr unsafe.Pointer, sign unsafe.Pointe
 
 func (ptr *QtBridge) ConnectNotifyDefault(sign std_core.QMetaMethod_ITF) {
 	if ptr.Pointer() != nil {
-		C.QtBridgedd03f6_ConnectNotifyDefault(ptr.Pointer(), std_core.PointerFromQMetaMethod(sign))
+		C.QtBridgea35b5a_ConnectNotifyDefault(ptr.Pointer(), std_core.PointerFromQMetaMethod(sign))
 	}
 }
 
-//export callbackQtBridgedd03f6_CustomEvent
-func callbackQtBridgedd03f6_CustomEvent(ptr unsafe.Pointer, event unsafe.Pointer) {
+//export callbackQtBridgea35b5a_CustomEvent
+func callbackQtBridgea35b5a_CustomEvent(ptr unsafe.Pointer, event unsafe.Pointer) {
 	if signal := qt.GetSignal(ptr, "customEvent"); signal != nil {
-		signal.(func(*std_core.QEvent))(std_core.NewQEventFromPointer(event))
+		(*(*func(*std_core.QEvent))(signal))(std_core.NewQEventFromPointer(event))
 	} else {
 		NewQtBridgeFromPointer(ptr).CustomEventDefault(std_core.NewQEventFromPointer(event))
 	}
@@ -451,14 +462,14 @@ func callbackQtBridgedd03f6_CustomEvent(ptr unsafe.Pointer, event unsafe.Pointer
 
 func (ptr *QtBridge) CustomEventDefault(event std_core.QEvent_ITF) {
 	if ptr.Pointer() != nil {
-		C.QtBridgedd03f6_CustomEventDefault(ptr.Pointer(), std_core.PointerFromQEvent(event))
+		C.QtBridgea35b5a_CustomEventDefault(ptr.Pointer(), std_core.PointerFromQEvent(event))
 	}
 }
 
-//export callbackQtBridgedd03f6_DeleteLater
-func callbackQtBridgedd03f6_DeleteLater(ptr unsafe.Pointer) {
+//export callbackQtBridgea35b5a_DeleteLater
+func callbackQtBridgea35b5a_DeleteLater(ptr unsafe.Pointer) {
 	if signal := qt.GetSignal(ptr, "deleteLater"); signal != nil {
-		signal.(func())()
+		(*(*func())(signal))()
 	} else {
 		NewQtBridgeFromPointer(ptr).DeleteLaterDefault()
 	}
@@ -466,24 +477,24 @@ func callbackQtBridgedd03f6_DeleteLater(ptr unsafe.Pointer) {
 
 func (ptr *QtBridge) DeleteLaterDefault() {
 	if ptr.Pointer() != nil {
-		C.QtBridgedd03f6_DeleteLaterDefault(ptr.Pointer())
-		ptr.SetPointer(nil)
+		C.QtBridgea35b5a_DeleteLaterDefault(ptr.Pointer())
 		runtime.SetFinalizer(ptr, nil)
 	}
 }
 
-//export callbackQtBridgedd03f6_Destroyed
-func callbackQtBridgedd03f6_Destroyed(ptr unsafe.Pointer, obj unsafe.Pointer) {
+//export callbackQtBridgea35b5a_Destroyed
+func callbackQtBridgea35b5a_Destroyed(ptr unsafe.Pointer, obj unsafe.Pointer) {
 	if signal := qt.GetSignal(ptr, "destroyed"); signal != nil {
-		signal.(func(*std_core.QObject))(std_core.NewQObjectFromPointer(obj))
+		(*(*func(*std_core.QObject))(signal))(std_core.NewQObjectFromPointer(obj))
 	}
+	qt.Unregister(ptr)
 
 }
 
-//export callbackQtBridgedd03f6_DisconnectNotify
-func callbackQtBridgedd03f6_DisconnectNotify(ptr unsafe.Pointer, sign unsafe.Pointer) {
+//export callbackQtBridgea35b5a_DisconnectNotify
+func callbackQtBridgea35b5a_DisconnectNotify(ptr unsafe.Pointer, sign unsafe.Pointer) {
 	if signal := qt.GetSignal(ptr, "disconnectNotify"); signal != nil {
-		signal.(func(*std_core.QMetaMethod))(std_core.NewQMetaMethodFromPointer(sign))
+		(*(*func(*std_core.QMetaMethod))(signal))(std_core.NewQMetaMethodFromPointer(sign))
 	} else {
 		NewQtBridgeFromPointer(ptr).DisconnectNotifyDefault(std_core.NewQMetaMethodFromPointer(sign))
 	}
@@ -491,22 +502,22 @@ func callbackQtBridgedd03f6_DisconnectNotify(ptr unsafe.Pointer, sign unsafe.Poi
 
 func (ptr *QtBridge) DisconnectNotifyDefault(sign std_core.QMetaMethod_ITF) {
 	if ptr.Pointer() != nil {
-		C.QtBridgedd03f6_DisconnectNotifyDefault(ptr.Pointer(), std_core.PointerFromQMetaMethod(sign))
+		C.QtBridgea35b5a_DisconnectNotifyDefault(ptr.Pointer(), std_core.PointerFromQMetaMethod(sign))
 	}
 }
 
-//export callbackQtBridgedd03f6_ObjectNameChanged
-func callbackQtBridgedd03f6_ObjectNameChanged(ptr unsafe.Pointer, objectName C.struct_Moc_PackedString) {
+//export callbackQtBridgea35b5a_ObjectNameChanged
+func callbackQtBridgea35b5a_ObjectNameChanged(ptr unsafe.Pointer, objectName C.struct_Moc_PackedString) {
 	if signal := qt.GetSignal(ptr, "objectNameChanged"); signal != nil {
-		signal.(func(string))(cGoUnpackString(objectName))
+		(*(*func(string))(signal))(cGoUnpackString(objectName))
 	}
 
 }
 
-//export callbackQtBridgedd03f6_TimerEvent
-func callbackQtBridgedd03f6_TimerEvent(ptr unsafe.Pointer, event unsafe.Pointer) {
+//export callbackQtBridgea35b5a_TimerEvent
+func callbackQtBridgea35b5a_TimerEvent(ptr unsafe.Pointer, event unsafe.Pointer) {
 	if signal := qt.GetSignal(ptr, "timerEvent"); signal != nil {
-		signal.(func(*std_core.QTimerEvent))(std_core.NewQTimerEventFromPointer(event))
+		(*(*func(*std_core.QTimerEvent))(signal))(std_core.NewQTimerEventFromPointer(event))
 	} else {
 		NewQtBridgeFromPointer(ptr).TimerEventDefault(std_core.NewQTimerEventFromPointer(event))
 	}
@@ -514,6 +525,6 @@ func callbackQtBridgedd03f6_TimerEvent(ptr unsafe.Pointer, event unsafe.Pointer)
 
 func (ptr *QtBridge) TimerEventDefault(event std_core.QTimerEvent_ITF) {
 	if ptr.Pointer() != nil {
-		C.QtBridgedd03f6_TimerEventDefault(ptr.Pointer(), std_core.PointerFromQTimerEvent(event))
+		C.QtBridgea35b5a_TimerEventDefault(ptr.Pointer(), std_core.PointerFromQTimerEvent(event))
 	}
 }

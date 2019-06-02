@@ -202,13 +202,13 @@ func (s *myApp) setSignals() {
 
 	s.cfgRunIcon.ConnectMouseDoubleClickEvent(func(e *gui.QMouseEvent) {
 
-		s.cfgRunIcon.SetText(widgets.QFileDialog_GetOpenFileName(s.window, gettext.T("Choose a PNG Image"), "../share/traycontroller/icons", "PNG Files(*.png *.PNG)", "*", widgets.QFileDialog__ReadOnly))
+		s.cfgRunIcon.SetText(widgets.QFileDialog_GetOpenFileName(s.window, gettext.T("Choose a PNG Image"), relatePath("..", "share", "traycontroller", "icons"), "PNG Files(*.png *.PNG)", "*", widgets.QFileDialog__ReadOnly))
 
 	})
 
 	s.cfgStopIcon.ConnectMouseDoubleClickEvent(func(e *gui.QMouseEvent) {
 
-		s.cfgStopIcon.SetText(widgets.QFileDialog_GetOpenFileName(s.window, gettext.T("Choose a PNG Image"), "../share/traycontroller/icons", "PNG Files(*.png *.PNG)", "*", widgets.QFileDialog__ReadOnly))
+		s.cfgStopIcon.SetText(widgets.QFileDialog_GetOpenFileName(s.window, gettext.T("Choose a PNG Image"), relatePath("..", "share", "traycontroller", "icons"), "PNG Files(*.png *.PNG)", "*", widgets.QFileDialog__ReadOnly))
 
 	})
 
@@ -264,7 +264,7 @@ Terminal=false
 Exec=` + binPath + `
 Name=` + name1 + `
 Icon=` + iconPath + `
-Categories=GTK;Utility;
+Categories=Utility;
 Comment=Tray Controller`
 		ioutil.WriteFile(path1, []byte(tmpl), 0755)
 	case windowOs:
@@ -288,6 +288,13 @@ func zeroPanic(s string) {
 	if len(name1) == 0 {
 		panic("get zero value.")
 	}
+}
+
+func relatePath(item ...string) string {
+	exe1, _ := os.Executable()
+	base := filepath.Dir(exe1)
+	paths := append([]string{base}, item...)
+	return filepath.Join(paths...)
 }
 
 func (s *myApp) makeConfig() {
