@@ -1,5 +1,5 @@
 package main
 
 func init() {
-	osID = 1
+	osID = windowOs
 }

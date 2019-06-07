@@ -19,6 +19,11 @@ import (
 	"github.com/rocket049/gettext-go/gettext"
 )
 
+const (
+	linuxOs int = iota
+	windowOs
+)
+
 type myCfg struct {
 	Exec string
 	Args string
@@ -58,30 +63,6 @@ func getCfgDir(name string) (string, error) {
 	return dir1, nil
 }
 
-// func getBinPath(name string) (string, error) {
-// 	if len(name) == 0 {
-// 		return "", errors.New("Must give me a name.")
-// 	}
-// 	switch osID {
-// 	case 0:
-// 		home, err := os.UserHomeDir()
-// 		if err != nil {
-// 			return "", err
-// 		}
-// 		dir1 := filepath.Join(home, "bin")
-// 		os.MkdirAll(dir1, os.ModePerm)
-// 		return filepath.Join(dir1, name), nil
-// 	case 1:
-// 		exe, err := os.Executable()
-// 		if err != nil {
-// 			return "", err
-// 		}
-// 		dir1 := filepath.Dir(exe)
-// 		return filepath.Join(dir1, name+".exe"), nil
-// 	}
-// 	return "", nil
-// }
-
 func getControllerPath() (string, error) {
 	exe, err := os.Executable()
 	if err != nil {
@@ -90,9 +71,9 @@ func getControllerPath() (string, error) {
 	dir1 := filepath.Dir(exe)
 	var res string
 	switch osID {
-	case 0:
+	case linuxOs:
 		res = filepath.Join(dir1, "tray-controller-qt")
-	case 1:
+	case windowOs:
 		res = filepath.Join(dir1, "tray-controller-qt.exe")
 	}
 	return res, nil
@@ -138,10 +119,10 @@ func (s *myApp) Run() {
 	s.cfgName.SetFixedWidth(300)
 	grid.AddWidget(s.cfgName, 1, 1, 0)
 	switch osID {
-	case 0:
+	case linuxOs:
 		s.cfgName.SetToolTip(gettext.T("I will generate Menu item") + ":ControllerName")
 		s.cfgName.SetPlaceholderText(gettext.T("I will generate Menu item") + ":ControllerName")
-	case 1:
+	case windowOs:
 		s.cfgName.SetToolTip(gettext.T("I will generate script") + ":launcher/ControllerName.vbs")
 		s.cfgName.SetPlaceholderText(gettext.T("I will generate script") + ":launcher/ControllerName.vbs")
 	}
@@ -221,13 +202,13 @@ func (s *myApp) setSignals() {
 
 	s.cfgRunIcon.ConnectMouseDoubleClickEvent(func(e *gui.QMouseEvent) {
 
-		s.cfgRunIcon.SetText(widgets.QFileDialog_GetOpenFileName(s.window, gettext.T("Choose a PNG Image"), "../share/traycontroller/icons", "PNG Files(*.png *.PNG)", "*", widgets.QFileDialog__ReadOnly))
+		s.cfgRunIcon.SetText(widgets.QFileDialog_GetOpenFileName(s.window, gettext.T("Choose a PNG Image"), relatePath("..", "share", "traycontroller", "icons"), "PNG Files(*.png *.PNG)", "*", widgets.QFileDialog__ReadOnly))
 
 	})
 
 	s.cfgStopIcon.ConnectMouseDoubleClickEvent(func(e *gui.QMouseEvent) {
 
-		s.cfgStopIcon.SetText(widgets.QFileDialog_GetOpenFileName(s.window, gettext.T("Choose a PNG Image"), "../share/traycontroller/icons", "PNG Files(*.png *.PNG)", "*", widgets.QFileDialog__ReadOnly))
+		s.cfgStopIcon.SetText(widgets.QFileDialog_GetOpenFileName(s.window, gettext.T("Choose a PNG Image"), relatePath("..", "share", "traycontroller", "icons"), "PNG Files(*.png *.PNG)", "*", widgets.QFileDialog__ReadOnly))
 
 	})
 
@@ -254,7 +235,7 @@ func copyFile(src, dst string, mode os.FileMode) error {
 
 func makeBinPath(progPath, name1 string) string {
 	switch osID {
-	case 1:
+	case windowOs:
 		p1 := strings.ReplaceAll(progPath, " ", `"" ""`)
 		n1 := strings.ReplaceAll(name1, " ", `"" ""`)
 		return fmt.Sprintf("%s %s", p1, n1)
@@ -267,7 +248,7 @@ func makeLauncher(name1, binPath, iconPath string) error {
 		return errors.New("Must provide program pathname")
 	}
 	switch osID {
-	case 0:
+	case linuxOs:
 		//linux
 		home, err := os.UserHomeDir()
 		if err != nil {
@@ -283,10 +264,10 @@ Terminal=false
 Exec=` + binPath + `
 Name=` + name1 + `
 Icon=` + iconPath + `
-Categories=GTK;Utility;
+Categories=Utility;
 Comment=Tray Controller`
 		ioutil.WriteFile(path1, []byte(tmpl), 0755)
-	case 1:
+	case windowOs:
 		//windows
 		exe1, _ := os.Executable()
 		dir1 := filepath.Dir(exe1)
@@ -307,6 +288,13 @@ func zeroPanic(s string) {
 	if len(name1) == 0 {
 		panic("get zero value.")
 	}
+}
+
+func relatePath(item ...string) string {
+	exe1, _ := os.Executable()
+	base := filepath.Dir(exe1)
+	paths := append([]string{base}, item...)
+	return filepath.Join(paths...)
 }
 
 func (s *myApp) makeConfig() {
