@@ -1,3 +1,4 @@
 tray-controller-qt
 /deploy
 /linux
+moc*
