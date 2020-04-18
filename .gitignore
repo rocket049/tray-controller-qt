@@ -1,4 +1,5 @@
 tray-controller-qt
-/deploy
-/linux
+deploy
+linux
 moc*
+rcc*
